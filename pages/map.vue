@@ -2,16 +2,16 @@
   <div>
     <canvas
       id="canvas"
-      width="1000px"
-      height="1000px"
+      width="1200px"
+      height="1200px"
       style="border: 1px solid black"
     />
     <div>
       <input
         type="checkbox"
-        @click="isEditing = !isEditing"
+        v-model="isEditing"
         id="editing"
-      /><label for="editing">Editing</label>
+      /><label for="editing">Editing markers</label>
     </div>
   </div>
 </template>
@@ -39,7 +39,7 @@ export default {
       transY: 0, // current shift for y axis
       scale: 1, // current global scale
       markerColor: '#2567d5',
-      isEditing: false,
+      isEditing: true,
       markers: [],
     }
   },
@@ -104,7 +104,6 @@ export default {
       // Show markers on the map, will be added later
       this.getPosition()
       this.createMarkers()
-
     })
   },
   methods: {
@@ -129,8 +128,8 @@ export default {
             (1000 * (pos.coords.longitude - leftBottomCoordinates.long)) /
             longDiff,
         }
-        console.log(myPosition)
         this.addMarker(myPosition, 'Я ТУТ', true)
+        this.setScale(1, myPosition.x, myPosition.y)
       })
     },
     applyTransform() {
@@ -197,9 +196,14 @@ export default {
           // Shifting
           if (mouseDown) {
             // Calculate transition with respect to the current scale
-            this.transX -= (oldPageX - e.pageX) / this.scale
+            //console.log('this.transX', this.transX)
+            if ((this.transX < 0)){
+              console.log('this.transX', this.transX / (this.scale / this.baseScale))
+              this.transX -= (oldPageX - e.pageX) / this.scale
+            }else{
+              this.transX = -1
+            }
             this.transY -= (oldPageY - e.pageY) / this.scale
-
             this.applyTransform()
 
             oldPageX = e.pageX
@@ -218,13 +222,12 @@ export default {
       $('body').mouseup(() => {
         mouseDown = false
       })
-
       // Zoom with mouse wheel
       container.mousewheel((event, delta, deltaX, deltaY) => {
         const offset = this.element.offset() // position of the canvas on the page
         const centerX = event.pageX - offset.left // x coordinate of the center of zoom
         const centerY = event.pageY - offset.top // y coordinate of the center of zoom
-        const zoomStep = Math.pow(1.3, deltaY) // user-friendly zoom step
+        const zoomStep = Math.pow(1.1, deltaY) // user-friendly zoom step
 
         this.setScale(this.scale * zoomStep, centerX, centerY)
 
@@ -337,7 +340,20 @@ export default {
       this.applyTransform()
     },
     addMarker(point, text, isUserMarker) {
-      this.markers.push({ coords: point, label: text })
+      // console.log(point)
+      // console.log(this.transX)
+      // console.log('x', point.x + this.transX)
+      const PIDORASINA = {
+        x: (point.x / (this.scale / this.baseScale)) - (this.transX / (this.scale / this.baseScale)),
+        y: point.y / (this.scale / this.baseScale),
+      };
+      console.log('точка', PIDORASINA,  'offset: ' + (this.transX / (this.scale / this.baseScale) + ' point coords without offset: ' + point.x / (this.scale / this.baseScale)))
+      // console.log('смещение', this.transX / (this.scale / this.baseScale))
+      // this.markers.push({
+      //   coords: PIDORASINA,
+      //   label: text,
+      // })
+      // console.log(this.canvas)
       const marker = new fabric.Path(
         'm 11,-19.124715 c -8.2234742,0 -14.8981027,-6.676138 -14.8981027,-14.9016 0,-5.633585 3.35732837,-10.582599 6.3104192,-14.933175 C 4.5507896,-52.109948 9.1631953,-59.34619 11,-61.92345 c 1.733396,2.518329 6.760904,9.975806 8.874266,13.22971 3.050966,4.697513 6.023837,8.647788 6.023837,14.667425 0,8.225462 -6.674629,14.9016 -14.898103,14.9016 z m 0,-9.996913 c 2.703016,0 4.903568,-2.201022 4.903568,-4.904687 0,-2.703664 -2.200552,-4.873493 -4.903568,-4.873493 -2.7030165,0 -4.903568,2.169829 -4.903568,4.873493 0,2.703665 2.2005515,4.904687 4.903568,4.904687 z"',
         {
@@ -354,7 +370,8 @@ export default {
           text: text, // save text inside the marker for import/export
         }
       )
-      // Text
+
+   // Text
       const textObject = new fabric.Text(text, {
         fontSize: 30,
         originX: 'center',
@@ -363,7 +380,7 @@ export default {
       })
       // Wrapper
       const background = new fabric.Rect({
-        width: 100,
+        width: 180,
         height: 40,
         originX: 'center',
         originY: 'center',
@@ -383,27 +400,28 @@ export default {
     },
     createMarkers() {
       let markersCount = 0
-      // Flag for edit mode
-      this.isEditing = false
 
       // Create new marker
       this.canvas.on('mouse:down', (options) => {
         let position
-
         if (!this.isEditing) {
           return
         }
         // Get absolute position on the canvas
         position = this.canvas.getPointer(options.e)
-        console.log(position)
-        // Text is a composition of order number and random number
-        this.addMarker(
-          position,
-          '#' + markersCount++ + ':' + Math.round(Math.random() * 1000)
-        )
-        // Don’t forget to re-draw the canvas!
+        // position = this.getCursorPosition(this.canvas.upperCanvasEl, options.e)
+
+
+        this.addMarker(position, `#${markersCount++}:${Math.round(position.x)}, ${Math.round(position.y)}`)
       })
     },
+    getCursorPosition(canvas, event) {
+      console.log(canvas)
+      const rect = canvas.getBoundingClientRect()
+      const x = event.clientX - rect.left
+      const y = event.clientY - rect.top
+      console.log("x: " + x + " y: " + y)
+  }
   },
 }
 </script>
