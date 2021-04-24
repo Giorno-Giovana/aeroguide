@@ -1,68 +1,35 @@
 <template>
-  <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">aeroguide</h1>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div>
+  <div class="flex flex-col mt-20">
+    <div class="flex justify-center">
+      <h1 class="text-3xl">Ваш Аэрогид</h1>
+    </div>
+    <ul class="m-auto mt-12 list-disc">
+      <li>Мы не дадим вавм пропустить рейс</li>
+      <li>Покажем ближайшие магазины</li>
+      <li>Укажем на ваш выход к самолёту</li>
+      <li>Скрасим досуг перед вылетом</li>
+      <li>И многое, многое другое</li>
+    </ul>
+    <div class="w-60 m-auto mt-32 flex flex-col">
+      <input
+        v-model="trackNumber"
+        type="text"
+        placeholder="Введитие номер рейса"
+        class="h-14 border placeholder-black text-center rounded-xl"
+      />
+      <button class="h-14 mt-3 border rounded-xl bg-gray-300">Войти</button>
     </div>
   </div>
 </template>
 
 <script>
-export default {}
+export default {
+  data() {
+    return {
+      trackNumber: '',
+    }
+  },
+}
 </script>
 
-<style>
-/* Sample `apply` at-rules with Tailwind CSS
-.container {
-@apply min-h-screen flex justify-center items-center text-center mx-auto;
-}
-*/
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
-</style>
+<style scoped></style>
