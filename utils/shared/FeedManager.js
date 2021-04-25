@@ -4,12 +4,6 @@ export class FeedManager {
     // TODO тут нужно добавить код, который будет генерировать контент ленты
     const orgs = [
       {
-        img: '/bk.png',
-        title: 'Burger King',
-        moveTime: '2 мин',
-        remainingTime: '44 минуты на посещение',
-      },
-      {
         img: '/kartoshka.png',
         title: 'Крошка картошка',
         moveTime: '25 мин',
@@ -26,6 +20,12 @@ export class FeedManager {
         title: 'Мегафон',
         moveTime: '5 мин',
         remainingTime: '41 минута на посещение',
+      },
+      {
+        img: '/bk.png',
+        title: 'Burger King',
+        moveTime: '2 мин',
+        remainingTime: '44 минуты на посещение',
       },
       {
         img: '/mcd.jpg',
@@ -48,8 +48,9 @@ export class FeedManager {
   subscribe(cb) {
     this.cb = cb
     // TODO тут надо поставить таймер в минуту
-    const timeout = 1000 // * 60
-    this.timerId = setInterval(this.intervalHandler, timeout)
+    this.intervalHandler()
+    // const timeout = 1000 // * 60
+    // this.timerId = setInterval(this.intervalHandler, timeout)
   }
 
   unSubscribe() {
