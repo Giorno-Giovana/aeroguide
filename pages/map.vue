@@ -1,16 +1,17 @@
 <template>
   <div>
     <canvas
-      id='canvas'
-      width='500px'
-      height='500px'
-      style='border: 1px solid black'
+      id="canvas"
+      width="1000px"
+      height="1000px"
+      style="border: 1px solid black"
     />
     <div>
-      <input id='editing' v-model='isEditing' type='checkbox' /><label
-      for='editing'
-    >Editing markers</label
-    >
+      <input id="editing" v-model="isEditing" type="checkbox" /><label
+        for="editing"
+        >Editing markers</label
+      >
+      <button @click="showPath()">Show path</button>
     </div>
   </div>
 </template>
@@ -39,7 +40,7 @@ export default {
       scale: 1, // current global scale
       markerColor: '#2567d5',
       isEditing: true,
-      markers: []
+      markers: [],
     }
   },
 
@@ -50,7 +51,7 @@ export default {
       scale: 1, // set default scale
       renderOnAddRemove: false, // disable auto-render in order to improve performance for complex maps with a lot of markers
       moveCursor: 'default', // reset mouse cursor — they are not used by us
-      hoverCursor: 'default'
+      hoverCursor: 'default',
     })
     // fabric.util.loadImage('map.jpg', (img) => {
     fabric.util.loadImage('d_1.png', (img) => {
@@ -81,7 +82,7 @@ export default {
         left: map.width / 2,
         top: map.height / 2,
         originX: 'center',
-        originY: 'center'
+        originY: 'center',
       })
       this.canvas.add(map)
       // Zoom after load in order to show whole map from the beginning
@@ -109,11 +110,11 @@ export default {
     getPosition() {
       const leftBottomCoordinates = {
         lat: 55.961149,
-        long: 37.402112
+        long: 37.402112,
       }
       const rightTopCoordinates = {
         lat: 55.966114,
-        long: 37.406953
+        long: 37.406953,
       }
       const latDiff = rightTopCoordinates.lat - leftBottomCoordinates.lat
       const longDiff = rightTopCoordinates.long - leftBottomCoordinates.long
@@ -125,7 +126,7 @@ export default {
             latDiff,
           y:
             (1000 * (pos.coords.longitude - leftBottomCoordinates.long)) /
-            longDiff
+            longDiff,
         }
         this.addMarker(myPosition, 'Я ТУТ', true)
         this.setScale(1, myPosition.x, myPosition.y)
@@ -173,8 +174,10 @@ export default {
 
       window.transY = transY
 
+
       // Group all objects and apply transform on the group
       const group = new fabric.Group(canvas.getObjects())
+      console.log(group)
       group.scaleX = scale / canvas.scale
       group.scaleY = scale / canvas.scale
       group.left = transX * scale
@@ -279,7 +282,7 @@ export default {
             currentScale =
               Math.sqrt(
                 Math.pow(touches[0].pageX - touches[1].pageX, 2) +
-                Math.pow(touches[0].pageY - touches[1].pageY, 2)
+                  Math.pow(touches[0].pageY - touches[1].pageY, 2)
               ) / touchStartDistance
             this.setScale(
               touchStartScale * currentScale,
@@ -309,7 +312,7 @@ export default {
             touchStartScale = this.scale
             touchStartDistance = Math.sqrt(
               Math.pow(touches[0].pageX - touches[1].pageX, 2) +
-              Math.pow(touches[0].pageY - touches[1].pageY, 2)
+                Math.pow(touches[0].pageY - touches[1].pageY, 2)
             )
           }
         }
@@ -341,8 +344,12 @@ export default {
         this.transX -= ((zoomStep - 1) / scaleToSet) * anchorX
         this.transY -= ((zoomStep - 1) / scaleToSet) * anchorY
       }
+      const shiftX = window.transX
+      const shiftY = window.transY
       this.scale = scaleToSet
+
       this.applyTransform()
+
     },
     addMarker(point, text, isUserMarker) {
       const shiftX = window.transX
@@ -356,12 +363,14 @@ export default {
       this.markers.push({
         position: {
           x: x,
-          y: y
+          y: y,
         },
         label: text,
       })
       window.markers = this.markers
-      console.log(window.markers.map(item => String([item.position.x, item.position.y])))
+      console.log(
+        window.markers.map((item) => String([item.position.x, item.position.y]))
+      )
       const marker = new fabric.Path(
         'm 11,-19.124715 c -8.2234742,0 -14.8981027,-6.676138 -14.8981027,-14.9016 0,-5.633585 3.35732837,-10.582599 6.3104192,-14.933175 C 4.5507896,-52.109948 9.1631953,-59.34619 11,-61.92345 c 1.733396,2.518329 6.760904,9.975806 8.874266,13.22971 3.050966,4.697513 6.023837,8.647788 6.023837,14.667425 0,8.225462 -6.674629,14.9016 -14.898103,14.9016 z m 0,-9.996913 c 2.703016,0 4.903568,-2.201022 4.903568,-4.904687 0,-2.703664 -2.200552,-4.873493 -4.903568,-4.873493 -2.7030165,0 -4.903568,2.169829 -4.903568,4.873493 0,2.703665 2.2005515,4.904687 4.903568,4.904687 z"',
         {
@@ -375,7 +384,7 @@ export default {
           originY: 'center',
           fill: this.markerColor,
           stroke: '#2e69b6',
-          text // save text inside the marker for import/export
+          text, // save text inside the marker for import/export
         }
       )
 
@@ -384,7 +393,7 @@ export default {
         fontSize: 30,
         originX: 'center',
         fill: this.markerColor,
-        originY: 'center'
+        originY: 'center',
       })
       // Wrapper
       const background = new fabric.Rect({
@@ -393,14 +402,14 @@ export default {
         originX: 'center',
         originY: 'center',
         fill: 'white',
-        stroke: 'black'
+        stroke: 'black',
       })
       // Group for correct positioning
       const textGroup = new fabric.Group([background, textObject], {
         scaleX: this.scale,
         scaleY: this.scale,
         left: point.x + 20 * this.scale, // respect current scale
-        top: point.y - 30 * this.scale // respect current scale
+        top: point.y - 30 * this.scale, // respect current scale
       })
       this.canvas.add(marker)
       this.canvas.add(textGroup)
@@ -426,15 +435,73 @@ export default {
         )
       })
     },
-    getCursorPosition(canvas, event) {
-      // eslint-disable-next-line no-console
-      // console.log(canvas)
-      const rect = canvas.getBoundingClientRect()
-      const x = event.clientX - rect.left
-      const y = event.clientY - rect.top
-      // console.log('x: ' + x + ' y: ' + y)
-    }
-  }
+    showPath() {
+      this.canvas.getObjects('path').map(item => item.stroke === 'black' ? this.canvas.remove(item) : '')
+      this.bzCurve(this.markers)
+    },
+    gradient(a, b) {
+      return (b.y - a.y) / (b.x - a.x)
+    },
+    bzCurve(points, f, t) {
+      console.log(points)
+      if (typeof f == 'undefined') f = 0.3
+      if (typeof t == 'undefined') t = 1
+      let m = 0
+      let dx1 = 0
+      let dy1 = 0
+      let nexP
+      let dx2
+      let dy2
+
+      let preP = points[0]?.position
+
+      for (let i = 1; i < points.length; i++) {
+        let curP = points[i].position
+        nexP = points[i + 1]?.position
+        if (nexP) {
+          m = this.gradient(preP, nexP)
+          dx2 = (nexP.x - curP.x) * -f
+          dy2 = dx2 * m * t
+        } else {
+          dx2 = 0
+          dy2 = 0
+        }
+
+        this.bezierCurveTo(
+          preP.x,
+          preP.y,
+          curP.x + dx2,
+          curP.y + dy2,
+          curP.x,
+          curP.y
+        )
+
+        dx1 = dx2
+        dy1 = dy2
+        preP = curP
+      }
+    },
+    bezierCurveTo(point1_x, point1_y, point2_x, point2_y, point3_x, point3_y) {
+      let line = new fabric.Path('M 65 0 Q 100, 100, 200, 0', {
+        fill: '',
+        stroke: 'black',
+        objectCaching: false
+      })
+
+      line.path[0][1] = point1_x / 6
+      line.path[0][2] = point1_y / 6
+
+      line.path[1][1] = point2_x / 6
+      line.path[1][2] = point2_y / 6
+
+      line.path[1][3] = point3_x / 6
+      line.path[1][4] = point3_y / 6
+
+      line.selectable = false
+      this.canvas.add(line)
+      this.canvas.renderAll()
+    },
+  },
 }
 </script>
 
