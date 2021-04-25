@@ -15,6 +15,7 @@
 import ThePopup from '../components/ThePopup'
 import Card from '../components/Card'
 import TheCategories from '../components/TheCategories'
+import { FeedManager } from '../utils/shared/FeedManager'
 
 export default {
   name: 'Feed',
@@ -25,33 +26,9 @@ export default {
   },
   data() {
     return {
+      feedManager: null,
       currentCategory: '',
-      organizations: [
-        {
-          img: '/bk.png',
-          title: 'Burger King',
-          moveTime: '2 мин',
-          remainingTime: '44 минуты на посещение',
-        },
-        {
-          img: '/kartoshka.png',
-          title: 'Крошка картошка',
-          moveTime: '2 мин',
-          remainingTime: '44 минуты на посещение',
-        },
-        {
-          img: '/bk.png',
-          title: 'Burger King',
-          moveTime: '2 мин',
-          remainingTime: '44 минуты на посещение',
-        },
-        {
-          img: '/kartoshka.png',
-          title: 'Крошка картошка',
-          moveTime: '2 мин',
-          remainingTime: '44 минуты на посещение',
-        },
-      ],
+      organizations: null,
     }
   },
   watch: {
@@ -59,6 +36,15 @@ export default {
       // TODO для дебага
       console.log(val)
     },
+  },
+  mounted() {
+    this.feedManager = new FeedManager()
+    this.feedManager.subscribe((organizations) => {
+      this.organizations = organizations
+    })
+  },
+  beforeDestroy() {
+    this.feedManager.unSubscribe()
   },
   methods: {
     chooseOrganization(organization) {
