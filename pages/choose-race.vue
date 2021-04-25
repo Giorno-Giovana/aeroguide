@@ -43,29 +43,29 @@ export default {
       // this.$store.state["user/departureTime"]
       races: [
         {
-          race: 'FV 6275',
+          race: 'WZ 121',
           from: {
             city: 'Москва',
             airport: 'Шереметьево',
-            time: '06:50',
+            time: '00:15',
           },
           to: {
-            city: 'Челябинск',
-            airport: 'Баландино',
-            time: '06:50',
+            city: 'Сочи',
+            airport: 'Сочи',
+            time: '02:45',
           },
         },
         {
-          race: 'FV 6275',
+          race: 'FV 6499',
           from: {
             city: 'Москва',
             airport: 'Шереметьево',
-            time: '06:50',
+            time: '00:35',
           },
           to: {
-            city: 'Челябинск',
-            airport: 'Баландино',
-            time: '06:50',
+            city: 'Сочи',
+            airport: 'Сочи',
+            time: '03:05',
           },
         },
       ],

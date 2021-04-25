@@ -12,20 +12,32 @@ export class FeedManager {
       {
         img: '/kartoshka.png',
         title: 'Крошка картошка',
-        moveTime: '2 мин',
-        remainingTime: '44 минуты на посещение',
+        moveTime: '25 мин',
+        remainingTime: '21 минута на посещение',
       },
       {
-        img: '/bk.png',
-        title: 'Burger King',
-        moveTime: '2 мин',
-        remainingTime: '44 минуты на посещение',
+        img: '/registration.jpg',
+        title: 'Стойка регистрации',
+        moveTime: '3 мин',
+        remainingTime: '43 минуты на посещение',
       },
       {
-        img: '/kartoshka.png',
-        title: 'Крошка картошка',
-        moveTime: '2 мин',
-        remainingTime: '44 минуты на посещение',
+        img: '/megafon.jpeg',
+        title: 'Мегафон',
+        moveTime: '5 мин',
+        remainingTime: '41 минута на посещение',
+      },
+      {
+        img: '/mcd.jpg',
+        title: 'Макдональдс',
+        moveTime: '5 мин',
+        remainingTime: '41 минута на посещение',
+      },
+      {
+        img: '/tele2.jpg',
+        title: 'Tele2',
+        moveTime: '0 мин',
+        remainingTime: '46 минут на посещение',
       },
     ]
     if (this.cb) {

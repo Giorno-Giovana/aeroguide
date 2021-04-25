@@ -1,6 +1,10 @@
 <template>
   <div class="mt-6" @click="choose">
-    <img :src="organization.img" class="h-40 object-cover rounded-xl" alt="" />
+    <img
+      :src="organization.img"
+      class="h-40 object-contain rounded-xl"
+      alt=""
+    />
     <div class="flex justify-between mt-2" style="max-width: 380px">
       <h3 class="block font-bold text-xl">{{ organization.title }}</h3>
       <div class="flex align-middle pt-1">
