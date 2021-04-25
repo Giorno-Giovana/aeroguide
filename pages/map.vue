@@ -6,13 +6,6 @@
       height="1000px"
       style="border: 1px solid black"
     />
-    <div>
-      <input id="editing" v-model="isEditing" type="checkbox" /><label
-        for="editing"
-        >Editing markers</label
-      >
-      <button @click="showPath()">Show path</button>
-    </div>
   </div>
 </template>
 
@@ -41,6 +34,71 @@ export default {
       markerColor: '#2567d5',
       isEditing: true,
       markers: [],
+      paths: [
+        [
+          '1838.1776222473347,4579.231813862647',
+          '1852.980808741624,4620.9498848920075',
+          '1912.1935547187813,4657.284979014355',
+          '1994.283952550749,4676.125398188904',
+          '2084.4488157432384,4684.199863549426',
+          '2157.1190039879316,4634.4073271595435',
+          '2198.837075017292,4588.652023449922',
+        ],
+        [
+          '3752.096790312076,4706.447252674904',
+          '3673.8909870992243,4661.379501670888',
+          '3582.429963002839,4638.84562616888',
+          '3483.015806376333,4657.4029354058275',
+          '3420.716268223722,4678.611288819482',
+          '3345.161509187578,4691.866509703017',
+          '3272.25779432814,4705.121730586551',
+          '3212.6093003522383,4699.8196422331375',
+          '3127.7758866976196,4691.866509703017',
+          '3052.221127661475,4687.889943437957',
+          '2962.085625653443,4664.030545847596',
+          '2890.5074328823584,4660.053979582535',
+          '2795.069842520913,4670.6581562893625',
+          '2707.5853846895884,4668.007112112653',
+          '2610.822272239789,4660.0539795825325',
+          '2523.3378144084636,4661.379501670886',
+          '2401.38978227995,4669.332634201007',
+          '2287.3948826815563,4689.2154655263075',
+          '2197.2593806735254,4687.889943437954',
+          '2197.2593806735254,4687.889943437954',
+          '2091.217613605252,4679.936810907833',
+          '2002.4076336855735,4662.705023759238',
+          '1905.6445212357744,4638.845626168877',
+          '1839.3684168181037,4595.103397253215',
+        ],
+        [
+          '3766.802056281707,4807.297910901908',
+          '3761.9819759604216,4751.866987207129',
+          '3736.676554273675,4700.051123753314',
+          '3690.8857912214658,4668.720601664961',
+          '3690.8857912214658,4668.720601664961',
+          '3639.0699277676504,4654.260360701105',
+          '3580.0239438319077,4648.235260299499',
+          '3533.0281606993776,4644.6202000585345',
+          '3490.8524578881324,4642.210159897892',
+          '3442.651654675275,4660.285461102711',
+          '3377.5805703379256,4675.950722146888',
+          '3320.9446265628253,4707.2812442352415',
+          '3251.053461904191,4701.256143833635',
+          '3166.7020562817006,4691.6159831910645',
+          '3084.7606908198536,4688.000922950101',
+          '3024.5096868037863,4679.565782387851',
+          '2953.4135020648305,4662.6955012633525',
+          '2882.3173173258747,4655.465380781425',
+          '2816.041212908204,4659.080441022389',
+          '2747.355068329891,4656.670400861746',
+          '2696.744224956397,4604.854537407931',
+          '2682.2839839925405,4528.938272347688',
+          '2646.133381582902,4462.662167930018',
+          '2619.6229398158334,4400.001123753311',
+          '2600.342618530693,4337.340079576605',
+        ],
+      ],
+      currentPath: 0,
     }
   },
 
@@ -100,10 +158,9 @@ export default {
       this.canvas.setHeight(this.height)
 
       this.applyTransform()
-
       // Show markers on the map, will be added later
       // this.getPosition()
-      this.createMarkers()
+      //this.createMarkers()
     })
   },
   methods: {
@@ -128,7 +185,7 @@ export default {
             (1000 * (pos.coords.longitude - leftBottomCoordinates.long)) /
             longDiff,
         }
-        this.addMarker(myPosition, 'Я ТУТ', true)
+        // this.addMarker(myPosition, 'Я ТУТ', true)
         this.setScale(1, myPosition.x, myPosition.y)
       })
     },
@@ -174,10 +231,8 @@ export default {
 
       window.transY = transY
 
-
       // Group all objects and apply transform on the group
       const group = new fabric.Group(canvas.getObjects())
-      console.log(group)
       group.scaleX = scale / canvas.scale
       group.scaleY = scale / canvas.scale
       group.left = transX * scale
@@ -186,6 +241,8 @@ export default {
 
       // Refresh global scale for the canvas
       canvas.scale = scale
+
+      this.bzCurve(this.markers)
 
       // At last render canvas with changed objects
       canvas.renderAll()
@@ -344,106 +401,116 @@ export default {
         this.transX -= ((zoomStep - 1) / scaleToSet) * anchorX
         this.transY -= ((zoomStep - 1) / scaleToSet) * anchorY
       }
-      const shiftX = window.transX
-      const shiftY = window.transY
       this.scale = scaleToSet
 
       this.applyTransform()
-
     },
     addMarker(point, text, isUserMarker) {
-      const shiftX = window.transX
-      const shiftY = window.transY
-      const x = -shiftX + point.x / this.scale
-      const y = -shiftY + point.y / this.scale
-      console.log('x', x)
-      console.log('y', y)
-
-      console.log('смещение', this.transX / (this.scale / this.baseScale))
-      this.markers.push({
-        position: {
-          x: x,
-          y: y,
-        },
-        label: text,
-      })
-      window.markers = this.markers
-      console.log(
-        window.markers.map((item) => String([item.position.x, item.position.y]))
-      )
+      console.log(this.canvas.getObjects('group'))
+      this.canvas.getObjects('group').map((item) => this.canvas.remove(item))
+      this.canvas
+        .getObjects('path')
+        .map((item) =>
+          item.stroke === '#2e69b6' ? this.canvas.remove(item) : ''
+        )
+      //this.canvas.getObjects('rect').map(item => this.canvas.remove(item))
+      // const shiftX = window.transX
+      // const shiftY = window.transY
+      // const x = -shiftX + point.x / this.scale
+      // const y = -shiftY + point.y / this.scale
+      // console.log('x', x)
+      // console.log('y', y)
+      //
+      // console.log('смещение', this.transX / (this.scale / this.baseScale))
+      // this.markers.push([
+      //   x, y
+      // ])
+      // window.markers = this.markers
       const marker = new fabric.Path(
         'm 11,-19.124715 c -8.2234742,0 -14.8981027,-6.676138 -14.8981027,-14.9016 0,-5.633585 3.35732837,-10.582599 6.3104192,-14.933175 C 4.5507896,-52.109948 9.1631953,-59.34619 11,-61.92345 c 1.733396,2.518329 6.760904,9.975806 8.874266,13.22971 3.050966,4.697513 6.023837,8.647788 6.023837,14.667425 0,8.225462 -6.674629,14.9016 -14.898103,14.9016 z m 0,-9.996913 c 2.703016,0 4.903568,-2.201022 4.903568,-4.904687 0,-2.703664 -2.200552,-4.873493 -4.903568,-4.873493 -2.7030165,0 -4.903568,2.169829 -4.903568,4.873493 0,2.703665 2.2005515,4.904687 4.903568,4.904687 z"',
         {
-          width: isUserMarker ? 200 : 40,
-          height: isUserMarker ? 200 : 80,
+          width: isUserMarker ? 80 : 40,
+          height: isUserMarker ? 80 : 80,
           scaleX: this.scale,
           scaleY: this.scale,
-          left: point.x,
-          top: point.y,
+          left: (point[0] + window.transX) * this.scale,
+          top: (point[1] + window.transY) * this.scale,
           originX: 'center',
           originY: 'center',
           fill: this.markerColor,
           stroke: '#2e69b6',
-          text, // save text inside the marker for import/export
         }
       )
+      // // Text
+      // const textObject = new fabric.Text(text, {
+      //   fontSize: 30,
+      //   originX: 'center',
+      //   fill: this.markerColor,
+      //   originY: 'center',
+      // })
+      // // Wrapper
+      // const background = new fabric.Rect({
+      //   width: 100,
+      //   height: 40,
+      //   originX: 'center',
+      //   originY: 'center',
+      //   fill: 'white',
+      //   stroke: 'black',
+      // })
+      // // Group for correct positioning
+      // const textGroup = new fabric.Group([background, textObject], {
+      //   scaleX: this.scale,
+      //   scaleY: this.scale,
+      //   left: ((point[0] + window.transX) * this.scale) + 20 * this.scale, // respect current scale
+      //   top: ((point[1] + window.transX) * this.scale) - 30 * this.scale, // respect current scale
+      // })
 
-      // Text
-      const textObject = new fabric.Text(text, {
-        fontSize: 30,
-        originX: 'center',
-        fill: this.markerColor,
-        originY: 'center',
-      })
-      // Wrapper
-      const background = new fabric.Rect({
-        width: 180,
-        height: 40,
-        originX: 'center',
-        originY: 'center',
-        fill: 'white',
-        stroke: 'black',
-      })
-      // Group for correct positioning
-      const textGroup = new fabric.Group([background, textObject], {
-        scaleX: this.scale,
-        scaleY: this.scale,
-        left: point.x + 20 * this.scale, // respect current scale
-        top: point.y - 30 * this.scale, // respect current scale
-      })
       this.canvas.add(marker)
-      this.canvas.add(textGroup)
+      //this.canvas.add(textGroup)
       this.canvas.renderAll()
     },
-    createMarkers() {
-      let markersCount = 0
-
-      // Create new marker
-      this.canvas.on('mouse:down', (options) => {
-        if (!this.isEditing) {
-          return
-        }
-        // Get absolute position on the canvas
-        const position = this.canvas.getPointer(options.e)
-        // position = this.getCursorPosition(this.canvas.upperCanvasEl, options.e)
-
-        this.addMarker(
-          position,
-          `#${markersCount++}:${Math.round(position.x)}, ${Math.round(
-            position.y
-          )}`
-        )
-      })
-    },
-    showPath() {
-      this.canvas.getObjects('path').map(item => item.stroke === 'black' ? this.canvas.remove(item) : '')
+    // createMarkers() {
+    //   let markersCount = 0
+    //
+    //   // Create new marker
+    //   this.canvas.on('mouse:down', (options) => {
+    //     if (!this.isEditing) {
+    //       return
+    //     }
+    //     // Get absolute position on the canvas
+    //     const position = this.canvas.getPointer(options.e)
+    //     // position = this.getCursorPosition(this.canvas.upperCanvasEl, options.e)
+    //
+    //     this.addMarker(
+    //       position,
+    //       `#${markersCount++}:${Math.round(position.x)}, ${Math.round(
+    //         position.y
+    //       )}`
+    //     )
+    //   })
+    // },
+    showPath(index) {
+      this.markers = this.paths[index].map((mark) => mark.split(','))
+      this.markers = this.markers.map((marker) =>
+        marker.map((coord) => ~~+coord)
+      )
+      this.setScale(
+        1.1,
+        (this.markers[0][0] + window.transX) * this.scale,
+        (this.markers[0][1] + window.transY) * this.scale
+      )
+      this.addMarker(this.markers[0], 'Вы тут', true)
       this.bzCurve(this.markers)
     },
     gradient(a, b) {
-      return (b.y - a.y) / (b.x - a.x)
+      return (b[1] - a[1]) / (b[0] - a[0])
     },
     bzCurve(points, f, t) {
-      console.log(points)
+      this.canvas
+        .getObjects('path')
+        .map((item) =>
+          item.stroke === 'black' ? this.canvas.remove(item) : ''
+        )
       if (typeof f == 'undefined') f = 0.3
       if (typeof t == 'undefined') t = 1
       let m = 0
@@ -453,14 +520,14 @@ export default {
       let dx2
       let dy2
 
-      let preP = points[0]?.position
+      let preP = points[0]
 
       for (let i = 1; i < points.length; i++) {
-        let curP = points[i].position
-        nexP = points[i + 1]?.position
+        let curP = points[i]
+        nexP = points[i + 1]
         if (nexP) {
           m = this.gradient(preP, nexP)
-          dx2 = (nexP.x - curP.x) * -f
+          dx2 = (nexP[0] - curP[0]) * -f
           dy2 = dx2 * m * t
         } else {
           dx2 = 0
@@ -468,12 +535,12 @@ export default {
         }
 
         this.bezierCurveTo(
-          preP.x,
-          preP.y,
-          curP.x + dx2,
-          curP.y + dy2,
-          curP.x,
-          curP.y
+          preP[0],
+          preP[1],
+          curP[0] + dx2,
+          curP[1] + dy2,
+          curP[0],
+          curP[1]
         )
 
         dx1 = dx2
@@ -485,17 +552,18 @@ export default {
       let line = new fabric.Path('M 65 0 Q 100, 100, 200, 0', {
         fill: '',
         stroke: 'black',
-        objectCaching: false
+        objectCaching: false,
+        strokeWidth: 1.5,
       })
 
-      line.path[0][1] = point1_x / 6
-      line.path[0][2] = point1_y / 6
+      line.path[0][1] = (point1_x + window.transX) * this.scale
+      line.path[0][2] = (point1_y + window.transY) * this.scale
 
-      line.path[1][1] = point2_x / 6
-      line.path[1][2] = point2_y / 6
+      line.path[1][1] = (point2_x + window.transX) * this.scale
+      line.path[1][2] = (point2_y + window.transY) * this.scale
 
-      line.path[1][3] = point3_x / 6
-      line.path[1][4] = point3_y / 6
+      line.path[1][3] = (point3_x + window.transX) * this.scale
+      line.path[1][4] = (point3_y + window.transY) * this.scale
 
       line.selectable = false
       this.canvas.add(line)
