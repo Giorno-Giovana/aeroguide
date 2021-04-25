@@ -17,5 +17,6 @@ module.exports = {
   rules: {
     'no-unused-vars': 'warn',
     'linebreak-style': ['warn', 'unix'],
+    'no-console': 'off',
   },
 }
