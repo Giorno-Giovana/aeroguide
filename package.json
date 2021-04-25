@@ -11,9 +11,11 @@
     "lint": "yarn lint:js"
   },
   "dependencies": {
-    "2gis-maps": "^3.6.6",
+    "ant-design-vue": "^1.7.4",
+    "axios": "^0.21.1",
     "core-js": "^3.9.1",
-    "nuxt": "^2.15.3"
+    "nuxt": "^2.15.3",
+    "vue-horizontal-scroll": "^0.2.4"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^6.0.0",
