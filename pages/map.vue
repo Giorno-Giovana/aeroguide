@@ -101,7 +101,7 @@ export default {
       this.applyTransform()
 
       // Show markers on the map, will be added later
-      this.getPosition()
+      // this.getPosition()
       this.createMarkers()
     })
   },
