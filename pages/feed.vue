@@ -1,6 +1,7 @@
 <template>
   <div class="p-4">
     <ThePopup />
+    <Map :indx="indx" />
     <TheCategories v-model="currentCategory" />
     <Card
       v-for="(organization, index) in organizations"
@@ -16,10 +17,12 @@ import ThePopup from '../components/ThePopup'
 import Card from '../components/Card'
 import TheCategories from '../components/TheCategories'
 import { FeedManager } from '../utils/shared/FeedManager'
+import Map from './map'
 
 export default {
   name: 'Feed',
   components: {
+    Map,
     TheCategories,
     ThePopup,
     Card,
@@ -29,12 +32,22 @@ export default {
       feedManager: null,
       currentCategory: '',
       organizations: null,
+      indx: 2,
     }
   },
   watch: {
     currentCategory(val) {
+      if (val === 'Туалет') {
+        this.indx = 0
+      }
       if (val === 'Где поесть') {
         this.organizations = [
+          {
+            img: '/mcd.jpg',
+            title: 'Макдональдс',
+            moveTime: '5 мин',
+            remainingTime: '41 минута на посещение',
+          },
           {
             img: '/bk.png',
             title: 'Burger King',
@@ -46,12 +59,6 @@ export default {
             title: 'Крошка картошка',
             moveTime: '25 мин',
             remainingTime: '21 минута на посещение',
-          },
-          {
-            img: '/mcd.jpg',
-            title: 'Макдональдс',
-            moveTime: '5 мин',
-            remainingTime: '41 минута на посещение',
           },
         ]
       }
@@ -70,6 +77,9 @@ export default {
   },
   methods: {
     chooseOrganization(organization) {
+      if (organization.title === 'Макдональдс') {
+        this.indx = 1
+      }
       // TODO: Тут тоже что-то нужно намутить
       // тут тоже обсервер, это норм
       console.log(organization)

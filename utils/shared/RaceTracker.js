@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-// TODO НЕ РАБОТАЕТ ТУТ НИХУЯ
+// TODO починить api
 export const RaceTracker = {
   apikey: '4a3fd1b3-a363-4a00-b0a9-e89198dd009d',
   schedule: undefined,

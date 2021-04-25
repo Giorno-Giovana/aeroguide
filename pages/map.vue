@@ -1,9 +1,10 @@
 <template>
-  <div>
+  <div class="mt-3 mb-3">
     <canvas
       id="canvas"
-      width="1000px"
-      height="1000px"
+      width="300px"
+      height="300px"
+      class="rounded border border-white"
       style="border: 1px solid black"
     />
   </div>
@@ -18,6 +19,12 @@ require('jvectormap')
 
 export default {
   name: 'Map',
+  props: {
+    indx: {
+      type: Number,
+      default: 2,
+    },
+  },
   data() {
     return {
       canvas: null,
@@ -101,6 +108,11 @@ export default {
       currentPath: 0,
     }
   },
+  watch: {
+    indx(val) {
+      this.showPath(val)
+    },
+  },
 
   mounted() {
     this.element = $('#canvas') // we are going to use it for event handling
@@ -160,7 +172,7 @@ export default {
       this.applyTransform()
       // Show markers on the map, will be added later
       // this.getPosition()
-      //this.createMarkers()
+      // this.createMarkers()
     })
   },
   methods: {
@@ -413,7 +425,7 @@ export default {
         .map((item) =>
           item.stroke === '#2e69b6' ? this.canvas.remove(item) : ''
         )
-      //this.canvas.getObjects('rect').map(item => this.canvas.remove(item))
+      // this.canvas.getObjects('rect').map(item => this.canvas.remove(item))
       // const shiftX = window.transX
       // const shiftY = window.transY
       // const x = -shiftX + point.x / this.scale
@@ -466,7 +478,7 @@ export default {
       // })
 
       this.canvas.add(marker)
-      //this.canvas.add(textGroup)
+      // this.canvas.add(textGroup)
       this.canvas.renderAll()
     },
     // createMarkers() {
@@ -511,8 +523,8 @@ export default {
         .map((item) =>
           item.stroke === 'black' ? this.canvas.remove(item) : ''
         )
-      if (typeof f == 'undefined') f = 0.3
-      if (typeof t == 'undefined') t = 1
+      if (typeof f === 'undefined') f = 0.3
+      if (typeof t === 'undefined') t = 1
       let m = 0
       let dx1 = 0
       let dy1 = 0
@@ -523,7 +535,7 @@ export default {
       let preP = points[0]
 
       for (let i = 1; i < points.length; i++) {
-        let curP = points[i]
+        const curP = points[i]
         nexP = points[i + 1]
         if (nexP) {
           m = this.gradient(preP, nexP)
@@ -549,7 +561,7 @@ export default {
       }
     },
     bezierCurveTo(point1_x, point1_y, point2_x, point2_y, point3_x, point3_y) {
-      let line = new fabric.Path('M 65 0 Q 100, 100, 200, 0', {
+      const line = new fabric.Path('M 65 0 Q 100, 100, 200, 0', {
         fill: '',
         stroke: 'black',
         objectCaching: false,
@@ -572,10 +584,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-#map {
-  width: 100%;
-  height: 500px;
-}
-</style>

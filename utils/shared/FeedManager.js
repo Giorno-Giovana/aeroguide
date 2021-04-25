@@ -4,16 +4,16 @@ export class FeedManager {
     // TODO тут нужно добавить код, который будет генерировать контент ленты
     const orgs = [
       {
-        img: '/kartoshka.png',
-        title: 'Крошка картошка',
-        moveTime: '25 мин',
-        remainingTime: '21 минута на посещение',
-      },
-      {
         img: '/registration.jpg',
         title: 'Стойка регистрации',
         moveTime: '3 мин',
         remainingTime: '43 минуты на посещение',
+      },
+      {
+        img: '/kartoshka.png',
+        title: 'Крошка картошка',
+        moveTime: '25 мин',
+        remainingTime: '21 минута на посещение',
       },
       {
         img: '/megafon.jpeg',
