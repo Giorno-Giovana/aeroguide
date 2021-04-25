@@ -1,17 +1,16 @@
 <template>
   <div>
     <canvas
-      id="canvas"
-      width="1200px"
-      height="1200px"
-      style="border: 1px solid black"
+      id='canvas'
+      width='500px'
+      height='500px'
+      style='border: 1px solid black'
     />
     <div>
-      <input
-        type="checkbox"
-        v-model="isEditing"
-        id="editing"
-      /><label for="editing">Editing markers</label>
+      <input id='editing' v-model='isEditing' type='checkbox' /><label
+      for='editing'
+    >Editing markers</label
+    >
     </div>
   </div>
 </template>
@@ -33,14 +32,14 @@ export default {
       baseWidth: 0,
       baseHeight: 0,
       baseScale: 1,
-      width: 0, // current width
-      height: 0, // current height
+      width: 500, // current width
+      height: 500, // current height
       transX: 0, // current shift for x axis
       transY: 0, // current shift for y axis
       scale: 1, // current global scale
       markerColor: '#2567d5',
       isEditing: true,
-      markers: [],
+      markers: []
     }
   },
 
@@ -51,7 +50,7 @@ export default {
       scale: 1, // set default scale
       renderOnAddRemove: false, // disable auto-render in order to improve performance for complex maps with a lot of markers
       moveCursor: 'default', // reset mouse cursor — they are not used by us
-      hoverCursor: 'default',
+      hoverCursor: 'default'
     })
     // fabric.util.loadImage('map.jpg', (img) => {
     fabric.util.loadImage('d_1.png', (img) => {
@@ -82,7 +81,7 @@ export default {
         left: map.width / 2,
         top: map.height / 2,
         originX: 'center',
-        originY: 'center',
+        originY: 'center'
       })
       this.canvas.add(map)
       // Zoom after load in order to show whole map from the beginning
@@ -110,11 +109,11 @@ export default {
     getPosition() {
       const leftBottomCoordinates = {
         lat: 55.961149,
-        long: 37.402112,
+        long: 37.402112
       }
       const rightTopCoordinates = {
         lat: 55.966114,
-        long: 37.406953,
+        long: 37.406953
       }
       const latDiff = rightTopCoordinates.lat - leftBottomCoordinates.lat
       const longDiff = rightTopCoordinates.long - leftBottomCoordinates.long
@@ -126,7 +125,7 @@ export default {
             latDiff,
           y:
             (1000 * (pos.coords.longitude - leftBottomCoordinates.long)) /
-            longDiff,
+            longDiff
         }
         this.addMarker(myPosition, 'Я ТУТ', true)
         this.setScale(1, myPosition.x, myPosition.y)
@@ -156,6 +155,7 @@ export default {
       } else if (transX < minTransX) {
         transX = minTransX
       }
+      window.transX = transX
 
       // The same for y axis
       if (baseHeight * scale <= height) {
@@ -170,6 +170,8 @@ export default {
       } else if (transY < minTransY) {
         transY = minTransY
       }
+
+      window.transY = transY
 
       // Group all objects and apply transform on the group
       const group = new fabric.Group(canvas.getObjects())
@@ -196,11 +198,14 @@ export default {
           // Shifting
           if (mouseDown) {
             // Calculate transition with respect to the current scale
-            //console.log('this.transX', this.transX)
-            if ((this.transX < 0)){
-              console.log('this.transX', this.transX / (this.scale / this.baseScale))
+            // console.log('this.transX', this.transX)
+            if (this.transX < 0) {
+              // console.log(
+              //   'this.transX',
+              //   this.transX / (this.scale / this.baseScale)
+              // )
               this.transX -= (oldPageX - e.pageX) / this.scale
-            }else{
+            } else {
               this.transX = -1
             }
             this.transY -= (oldPageY - e.pageY) / this.scale
@@ -274,7 +279,7 @@ export default {
             currentScale =
               Math.sqrt(
                 Math.pow(touches[0].pageX - touches[1].pageX, 2) +
-                  Math.pow(touches[0].pageY - touches[1].pageY, 2)
+                Math.pow(touches[0].pageY - touches[1].pageY, 2)
               ) / touchStartDistance
             this.setScale(
               touchStartScale * currentScale,
@@ -304,7 +309,7 @@ export default {
             touchStartScale = this.scale
             touchStartDistance = Math.sqrt(
               Math.pow(touches[0].pageX - touches[1].pageX, 2) +
-                Math.pow(touches[0].pageY - touches[1].pageY, 2)
+              Math.pow(touches[0].pageY - touches[1].pageY, 2)
             )
           }
         }
@@ -340,20 +345,23 @@ export default {
       this.applyTransform()
     },
     addMarker(point, text, isUserMarker) {
-      // console.log(point)
-      // console.log(this.transX)
-      // console.log('x', point.x + this.transX)
-      const PIDORASINA = {
-        x: (point.x / (this.scale / this.baseScale)) - (this.transX / (this.scale / this.baseScale)),
-        y: point.y / (this.scale / this.baseScale),
-      };
-      console.log('точка', PIDORASINA,  'offset: ' + (this.transX / (this.scale / this.baseScale) + ' point coords without offset: ' + point.x / (this.scale / this.baseScale)))
-      // console.log('смещение', this.transX / (this.scale / this.baseScale))
-      // this.markers.push({
-      //   coords: PIDORASINA,
-      //   label: text,
-      // })
-      // console.log(this.canvas)
+      const shiftX = window.transX
+      const shiftY = window.transY
+      const x = -shiftX + point.x / this.scale
+      const y = -shiftY + point.y / this.scale
+      console.log('x', x)
+      console.log('y', y)
+
+      console.log('смещение', this.transX / (this.scale / this.baseScale))
+      this.markers.push({
+        position: {
+          x: x,
+          y: y
+        },
+        label: text,
+      })
+      window.markers = this.markers
+      console.log(window.markers.map(item => String([item.position.x, item.position.y])))
       const marker = new fabric.Path(
         'm 11,-19.124715 c -8.2234742,0 -14.8981027,-6.676138 -14.8981027,-14.9016 0,-5.633585 3.35732837,-10.582599 6.3104192,-14.933175 C 4.5507896,-52.109948 9.1631953,-59.34619 11,-61.92345 c 1.733396,2.518329 6.760904,9.975806 8.874266,13.22971 3.050966,4.697513 6.023837,8.647788 6.023837,14.667425 0,8.225462 -6.674629,14.9016 -14.898103,14.9016 z m 0,-9.996913 c 2.703016,0 4.903568,-2.201022 4.903568,-4.904687 0,-2.703664 -2.200552,-4.873493 -4.903568,-4.873493 -2.7030165,0 -4.903568,2.169829 -4.903568,4.873493 0,2.703665 2.2005515,4.904687 4.903568,4.904687 z"',
         {
@@ -367,16 +375,16 @@ export default {
           originY: 'center',
           fill: this.markerColor,
           stroke: '#2e69b6',
-          text: text, // save text inside the marker for import/export
+          text // save text inside the marker for import/export
         }
       )
 
-   // Text
+      // Text
       const textObject = new fabric.Text(text, {
         fontSize: 30,
         originX: 'center',
         fill: this.markerColor,
-        originY: 'center',
+        originY: 'center'
       })
       // Wrapper
       const background = new fabric.Rect({
@@ -385,14 +393,14 @@ export default {
         originX: 'center',
         originY: 'center',
         fill: 'white',
-        stroke: 'black',
+        stroke: 'black'
       })
       // Group for correct positioning
       const textGroup = new fabric.Group([background, textObject], {
         scaleX: this.scale,
         scaleY: this.scale,
         left: point.x + 20 * this.scale, // respect current scale
-        top: point.y - 30 * this.scale, // respect current scale
+        top: point.y - 30 * this.scale // respect current scale
       })
       this.canvas.add(marker)
       this.canvas.add(textGroup)
@@ -403,26 +411,30 @@ export default {
 
       // Create new marker
       this.canvas.on('mouse:down', (options) => {
-        let position
         if (!this.isEditing) {
           return
         }
         // Get absolute position on the canvas
-        position = this.canvas.getPointer(options.e)
+        const position = this.canvas.getPointer(options.e)
         // position = this.getCursorPosition(this.canvas.upperCanvasEl, options.e)
 
-
-        this.addMarker(position, `#${markersCount++}:${Math.round(position.x)}, ${Math.round(position.y)}`)
+        this.addMarker(
+          position,
+          `#${markersCount++}:${Math.round(position.x)}, ${Math.round(
+            position.y
+          )}`
+        )
       })
     },
     getCursorPosition(canvas, event) {
-      console.log(canvas)
+      // eslint-disable-next-line no-console
+      // console.log(canvas)
       const rect = canvas.getBoundingClientRect()
       const x = event.clientX - rect.left
       const y = event.clientY - rect.top
-      console.log("x: " + x + " y: " + y)
+      // console.log('x: ' + x + ' y: ' + y)
+    }
   }
-  },
 }
 </script>
 
